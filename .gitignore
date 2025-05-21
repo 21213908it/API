@@ -1,0 +1,9 @@
+# ENVIRONMENT
+.env
+env
+venv
+myenv
+
+# PYTHON CACHE
+__pycache__/
+API/__pycache__/

@@ -11,9 +11,9 @@ from typing import List
 app = FastAPI()
 
 # Load Models
-env_con_model_path = "model/env_con_model.pkl"
-with open(env_con_model_path, "rb") as f:
-    env_con_model = pickle.load(f)
+# env_con_model_path = "model/env_con_model.pkl"
+# with open(env_con_model_path, "rb") as f:
+#     env_con_model = pickle.load(f)
 
 milk_pred_model = joblib.load("model/milk_quality_knn_model.joblib")
 
@@ -27,8 +27,8 @@ with open(fec_model_path, 'rb') as file:
     fec_model = pickle.load(file)
 
 # Classes and Functions
-class PredictionRequest(BaseModel):
-    features: list  
+# class PredictionRequest(BaseModel):
+#     features: list  
 
 # Define enum for binary choices (0 for no, 1 for yes)
 class BinaryOption(int, Enum):
@@ -85,12 +85,12 @@ class MilkYieldInput(BaseModel):
 def read_root():
     return {"message": "Welcome to the Bovi Track API!"}
 
-@app.post("/env_con")  
-def env_con(request: PredictionRequest):
+# @app.post("/env_con")  
+# def env_con(request: PredictionRequest):
     
-    features = np.array(request.features).reshape(1, -1)  
-    prediction = env_con_model.predict(features)  
-    return {"prediction": prediction.tolist()}  
+#     features = np.array(request.features).reshape(1, -1)  
+#     prediction = env_con_model.predict(features)  
+#     return {"prediction": prediction.tolist()}  
 
 @app.post("/milk_pred")
 async def milk_pred(
@@ -167,9 +167,8 @@ async def future_env_condition(condition_today: int, tavg_today: float, hum_toda
         return "Medium"
     elif prediction == 2:
         return "Poor"
-
-
+    
 # Define server run configuration
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
