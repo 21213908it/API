@@ -167,3 +167,9 @@ async def future_env_condition(condition_today: int, tavg_today: float, hum_toda
         return "Medium"
     elif prediction == 2:
         return "Poor"
+
+
+# Define server run configuration
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
