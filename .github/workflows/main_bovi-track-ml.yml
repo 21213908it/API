@@ -1,7 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
 name: Build and deploy Python app to Azure Web App - bovi-track-ml
 
 on:
@@ -14,8 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
-
+      contents: read # Required for actions/checkout
     steps:
       - uses: actions/checkout@v4
 
@@ -24,26 +19,33 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Create and start virtual environment
+      - name: Create virtual environment and install dependencies
         run: |
           python -m venv venv
-          source venv/bin/activate
-      
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+          source venv/bin/activate  # For bash shells on ubuntu-latest
+          # Or, more robustly for subsequent commands if you split them:
+          # ./venv/bin/python -m pip install -r requirements.txt
+          pip install -r requirements.txt
+        # Note: The activation above is only for this 'run' block.
+        # If you split 'pip install' into another 'run' step, you'd need to activate again
+        # or call the python/pip executables directly from the venv path.
+        # For a single block like this, it's fine.
+
+      # Optional: Add step to run tests here
+      # run: |
+      #   source venv/bin/activate
+      #   pytest
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip release.zip ./* -r -x "venv/*" # Exclude the venv directory from the zip
+        # This zips the contents of the current directory (your repo root)
+        # excluding the 'venv' folder.
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip # Only upload the release.zip file
 
   deploy:
     runs-on: ubuntu-latest
@@ -52,19 +54,20 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write # Required for requesting the JWT for OIDC login
+      contents: read # Required for actions/checkout (though checkout isn't strictly needed here if only deploying artifact)
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: python-app
+          # This will download release.zip to the current working directory
 
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
+      # REMOVED: - name: Unzip artifact for deployment
+      # We will deploy the zip file directly.
+      # run: unzip release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -78,4 +81,5 @@ jobs:
         with:
           app-name: 'bovi-track-ml'
           slot-name: 'Production'
-          
+          package: release.zip # Specify the zip file to deploy
+                               # This is the crucial change for the deployment action.
