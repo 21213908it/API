@@ -121,9 +121,9 @@ async def milk_pred(
     # Convert the numpy.int64 to a native int
     knn_prediction = int(knn_prediction)
     if knn_prediction == 1:
-        if 250 <= Colour.value <= 255:
+        if 251 <= Colour.value <= 255:
             knn_prediction += 1
-        elif 240 <= Colour.value <= 245:
+        elif 240 <= Colour.value <= 244:
             knn_prediction -= 1
 
     # Return the KNN prediction
