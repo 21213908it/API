@@ -15,7 +15,7 @@ app = FastAPI()
 # with open(env_con_model_path, "rb") as f:
 #     env_con_model = pickle.load(f)
 
-milk_pred_model = joblib.load("model/milk_quality_knn_model.joblib")
+milk_pred_model = joblib.load("model/milk_quality_svm_model.joblib")
 
 try:
     milk_yield_model = joblib.load("model/milk_yield_model.joblib")
