@@ -122,9 +122,26 @@ async def milk_pred(
     knn_prediction = int(knn_prediction)
     if knn_prediction == 1:
         if 251 <= Colour.value <= 255:
-            knn_prediction += 1
+            if 4 <= pH <= 7 and 10 < Temprature <= 20 and Odor == BinaryOption.no:
+                knn_prediction += 1
+            elif 4 <= pH <= 7 and 10 < Temprature <= 20 and Odor == BinaryOption.yes:
+                knn_prediction -= 1
+            else:
+                knn_prediction
         elif 240 <= Colour.value <= 244:
-            knn_prediction -= 1
+            if 0 <= pH <= 4 and 40 < Temprature <= 100:
+                knn_prediction -= 1
+            if Taste == BinaryOption.yes and Odor == BinaryOption.yes and Turbidity == BinaryOption.yes:
+                knn_prediction -= 1
+            else:
+                knn_prediction
+        elif 245 <= Colour.value <= 250:
+            if 4 <= pH <= 7 and 10 < Temprature <= 20:
+                knn_prediction += 1
+            elif 0 <= pH <= 4 and 40 < Temprature <= 100:
+                knn_prediction -= 1
+            else:
+                knn_prediction
 
     # Return the KNN prediction
     return knn_prediction
